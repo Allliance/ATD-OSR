@@ -4,12 +4,25 @@ import torch
 from torchvision import transforms
 
 from robustbench import load_model
+from robustbench.model_zoo.architectures.dm_wide_resnet import DMPreActResNet, Swish
 import numpy as np
 import random
+import torch
 
 from models.preact_resnet import ti_preact_resnet
 
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+
+def list_data(dataset):
+    dataset.data = [x for x in dataset.data]
+    dataset.targets = [x for x in dataset.targets]
+    
+def select_indices(dataset, in_classes):
+    indices = np.asarray([i for i, x in enumerate(dataset.targets) if x in in_classes])
+    dataset.data = np.asarray(dataset.data)[indices]
+    dataset.targets = np.asarray(dataset.targets)[indices]
+    list_data(dataset)
+    dataset.targets = [in_classes.index(x) for x in dataset.targets]
 
 def fix_random_seed(seed):
     random.seed(seed)
@@ -32,12 +45,29 @@ class normalizer():
         return out
 
 
-def get_feature_extractor_model(training_type, in_dataset):
+def read_in_indices(run_index):
+  indices = []
+  with open(f'indices-{run_index}.osr', 'r') as f:
+    lst = f.read()
+    indices = [int(x) for x in lst.split(" ")]
+  return indices
+
+
+def get_feature_extractor_model(training_type, in_dataset, run_index=0):
 
     if training_type == 'adv':
     
         if in_dataset == 'cifar10':
-            model = load_model(model_name='Rade2021Helper_R18_extra', dataset='cifar10', threat_model='Linf').to(device)
+            path = f'./best_fea_run{run_index}.pt'
+            model = DMPreActResNet
+            checkpoint = torch.load(path)
+            model = DMPreActResNet(num_classes=6, activation_fn=Swish)
+
+            model.load_state_dict(checkpoint['model_state_dict'])
+
+            model = model.to(device)
+
+            # model = load_model(model_name='Rade2021Helper_R18_extra', dataset='cifar10', threat_model='Linf').to(device)
             model.logits = torch.nn.Sequential()
             model.eval()
 

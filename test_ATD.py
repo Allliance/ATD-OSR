@@ -7,9 +7,9 @@ from sklearn.metrics import roc_auc_score
 import argparse
 import os
 
-from utils import fix_random_seed, get_feature_extractor_model
-from data.closed_set import get_in_testing_loader
-from data.open_set import get_out_testing_datasets
+from utils import fix_random_seed, get_feature_extractor_model, read_in_indices
+from data.closed_set import get_in_testing_loader, get_in_testing_loader_osr
+from data.open_set import get_out_testing_datasets, get_out_testing_datasets_osr
 from pgd_attack import attack_pgd
 from models.DCGAN import Generator_fea, Discriminator_fea, wrapper_fea, Generator_pix, Discriminator_pix, weights_init
 
@@ -18,6 +18,8 @@ os.environ['TORCH_HOME'] = 'models/'
 #get args
 def get_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--run_index', default=0, type=int)
+    parser.add_argument('--method', default='ood', type=str, choices={'ood', 'osr'})
     parser.add_argument('--model_type', default='fea', type=str, choices={'fea', 'pix'})
     parser.add_argument('--training_type', default='adv', type=str, choices={'clean', 'adv'})
     parser.add_argument('--in_dataset', default='cifar10', type=str, choices={'cifar10', 'cifar100', 'TI'})
@@ -61,11 +63,24 @@ fix_random_seed(seed)
 #define deture extractor model
 model = get_feature_extractor_model(training_type, in_dataset)
 
+if args.method == 'osr':
+  in_classes_indices = read_in_indices(args.run_index)
+  num_classes = 10 if args.in_dataset == 'cifar10' else 20
+  out_classes_indices = [i for i in range(num_classes) if i not in in_classes_indices]
+
+  
+
 #in dataset
-testloader = get_in_testing_loader(in_dataset, batch_size)
+if args.method == 'ood':
+  testloader = get_in_testing_loader(in_dataset, batch_size)
+else:
+  testloader = get_in_testing_loader_osr(in_dataset, batch_size, in_classes_indices)
 
 #out datasets
-out_names, out_datasets = get_out_testing_datasets(out_names)
+if args.method == 'ood':
+  out_names, out_datasets = get_out_testing_datasets(out_names)
+else:
+  out_names, out_datasets = get_out_testing_datasets_osr(args.in_dataset, out_classes_indices)
 
 print('Out datasets:', out_names)
 
@@ -126,7 +141,7 @@ for i, dataset in enumerate(out_datasets):
         alpha = 2.5*eps/attack_iters
 
         testloader_out = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=2)
-        for (x, y) in tqdm.tqdm(testloader_out, desc=args.out_datasets[i]+"_"+str(round(eps,3))):
+        for (x, y) in tqdm.tqdm(testloader_out, desc=out_names[i]+"_"+str(round(eps,3))):
             x = x.to(device)
 
             if eps == 0:
