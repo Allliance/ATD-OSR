@@ -7,6 +7,7 @@ from sklearn.metrics import roc_auc_score
 import argparse
 import os
 
+from data.constants import get_run_name
 from utils import fix_random_seed, get_feature_extractor_model, read_in_indices
 from data.closed_set import get_in_testing_loader, get_in_testing_loader_osr
 from data.open_set import get_out_testing_datasets, get_out_testing_datasets_osr
@@ -35,6 +36,8 @@ def get_args():
   
     return parser.parse_args()
 
+
+
 args = get_args()
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
@@ -49,6 +52,8 @@ epsilons = np.array([0, eps])
 attack_iters = args.attack_iters
 
 run_name = args.run_name
+run_name = get_run_name(in_dataset, args.run_index)
+
 test_type = 'best_'
 save_dir = 'checkpoints/'
 print('Run name:', run_name)

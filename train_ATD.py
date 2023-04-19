@@ -9,6 +9,7 @@ import argparse
 import os, copy
 import random
 from tqdm import tqdm
+from data.constants import get_run_name
 
 from utils import fix_random_seed, get_feature_extractor_model, read_in_indices
 from data.closed_set import get_in_training_loaders, get_in_training_loaders_osr
@@ -23,12 +24,15 @@ os.environ['TORCH_HOME'] = 'models/'
 #get args
 def get_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--num_classes', default=6, type=int)
+    parser.add_argument('--exposure_path', default='./imagenet', type=str)
+    parser.add_argument('--fea_path', default='./best_fea.pt', type=str)
     parser.add_argument('--run_index', default=0, type=int)
     parser.add_argument('--in_classes', default=6, type=int)
     parser.add_argument('--method', default='ood', type=str, choices={'ood', 'osr'})
     parser.add_argument('--model_type', default='fea', type=str, choices={'fea', 'pix'})
     parser.add_argument('--training_type', default='adv', type=str, choices={'clean', 'adv'})
-    parser.add_argument('--in_dataset', default='cifar10', type=str, choices={'cifar10', 'cifar100', 'TI'})
+    parser.add_argument('--in_dataset', default='cifar10', type=str, choices={'cifar10', 'cifar100', 'mnist', 'fmnist', 'svhn', 'TI'})
     
     parser.add_argument('--alpha', default=0.5, type=float)
     parser.add_argument('--batch_size', default=128, type=int)
@@ -58,6 +62,7 @@ alp = 2.5*eps/attack_iters
 clean_val = alpha<=0.5
 
 run_name = args.run_name
+run_name = get_run_name(in_dataset, args.run_index)
 print('Run name:', run_name)
 
 print("Method is ", args.method)
@@ -68,7 +73,7 @@ fix_random_seed(seed)
 
 
 #define deture extractor model
-model = get_feature_extractor_model(training_type, in_dataset, run_index=args.run_index)
+model = get_feature_extractor_model(training_type, in_dataset, args=args)
 
 
 #in dataset and out dataset
@@ -158,6 +163,7 @@ iters = 0
 best_auc = 0
 
 print("Starting Training Loop...")
+
 # For each epoch
 for epoch in range(num_epochs):
       

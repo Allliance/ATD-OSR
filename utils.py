@@ -8,6 +8,7 @@ from robustbench.model_zoo.architectures.dm_wide_resnet import DMPreActResNet, S
 import numpy as np
 import random
 import torch
+from data.constants import OSR_DATASETS
 
 from models.preact_resnet import ti_preact_resnet
 
@@ -53,15 +54,13 @@ def read_in_indices(run_index):
   return indices
 
 
-def get_feature_extractor_model(training_type, in_dataset, run_index=0):
+def get_feature_extractor_model(training_type, in_dataset, args):
 
     if training_type == 'adv':
     
-        if in_dataset == 'cifar10':
-            path = f'./best_fea_run{run_index}.pt'
-            model = DMPreActResNet
-            checkpoint = torch.load(path)
-            model = DMPreActResNet(num_classes=6, activation_fn=Swish)
+        if in_dataset in OSR_DATASETS:
+            checkpoint = torch.load(args.fea_path)
+            model = DMPreActResNet(num_classes=args.num_classes, activation_fn=Swish)
 
             model.load_state_dict(checkpoint['model_state_dict'])
 
@@ -75,7 +74,6 @@ def get_feature_extractor_model(training_type, in_dataset, run_index=0):
             model = load_model(model_name='Rade2021Helper_R18_ddpm', dataset='cifar100', threat_model='Linf').to(device)
             model.logits = torch.nn.Sequential()
             model.eval()
-        
         
         elif in_dataset == 'TI':
             ckpt = torch.load("models/weights-best-TI.pt")['model_state_dict']
