@@ -60,7 +60,7 @@ def get_feature_extractor_model(training_type, in_dataset, args):
     
         if in_dataset in OSR_DATASETS:
             checkpoint = torch.load(args.fea_path)
-            model = DMPreActResNet(num_classes=args.num_classes, activation_fn=Swish)
+            model = DMPreActResNet(num_classes=args.in_classes, activation_fn=Swish)
 
             model.load_state_dict(checkpoint['model_state_dict'])
 
