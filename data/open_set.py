@@ -41,9 +41,9 @@ class ImageNet(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.data)
 
-def get_out_training_loaders_osr(batch_size, size=5000, exposure_root='./out'):
+def get_out_training_loaders_osr(batch_size, size=5000, exposure_path='./out'):
 
-    trainset_out = ImageNet(root=exposure_root, transform=transforms.Compose([transforms.ToPILImage(),
+    trainset_out = ImageNet(root=exposure_path, transform=transforms.Compose([transforms.ToPILImage(),
                                                                                     transforms.RandomChoice(
                                                                                         [transforms.RandomApply([transforms.RandomAffine(90, translate=(0.15, 0.15), scale=(0.85, 1), shear=None)], p=0.6),
                                                                                          transforms.RandomApply([transforms.RandomAffine(0, translate=None, scale=(0.5, 0.75), shear=30)], p=0.6),
