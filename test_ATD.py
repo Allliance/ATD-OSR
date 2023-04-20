@@ -19,6 +19,7 @@ os.environ['TORCH_HOME'] = 'models/'
 #get args
 def get_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--fea_path', default='./best_fea.pt', type=str)
     parser.add_argument('--run_index', default=0, type=int)
     parser.add_argument('--method', default='ood', type=str, choices={'ood', 'osr'})
     parser.add_argument('--model_type', default='fea', type=str, choices={'fea', 'pix'})
@@ -66,7 +67,7 @@ seed = args.seed
 fix_random_seed(seed)
 
 #define deture extractor model
-model = get_feature_extractor_model(training_type, in_dataset)
+model = get_feature_extractor_model(training_type, in_dataset, args=args)
 
 if args.method == 'osr':
   in_classes_indices = read_in_indices(args.run_index)
