@@ -70,7 +70,7 @@ model = get_feature_extractor_model(training_type, in_dataset)
 
 if args.method == 'osr':
   in_classes_indices = read_in_indices(args.run_index)
-  num_classes = 10 if args.in_dataset == 'cifar10' else 20
+  num_classes = 20 if args.in_dataset == 'cifar100' else 10
   out_classes_indices = [i for i in range(num_classes) if i not in in_classes_indices]
 
   

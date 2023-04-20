@@ -41,9 +41,9 @@ class ImageNet(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.data)
 
-def get_out_training_loaders_osr(batch_size, size=5000):
+def get_out_training_loaders_osr(batch_size, size=5000, exposure_root='./out'):
 
-    trainset_out = ImageNet(transform=transforms.Compose([transforms.ToPILImage(),
+    trainset_out = ImageNet(root=exposure_root, transform=transforms.Compose([transforms.ToPILImage(),
                                                                                     transforms.RandomChoice(
                                                                                         [transforms.RandomApply([transforms.RandomAffine(90, translate=(0.15, 0.15), scale=(0.85, 1), shear=None)], p=0.6),
                                                                                          transforms.RandomApply([transforms.RandomAffine(0, translate=None, scale=(0.5, 0.75), shear=30)], p=0.6),
@@ -108,14 +108,30 @@ def get_out_testing_datasets_osr(in_dataset, out_indices):
     out_datasets = []
     returned_out_names = []
 
-    testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+
+    if in_dataset == 'cifar10':
+        testset = torchvision.datasets.CIFAR10(root='./data', train=False,
                                           download=True, transform=transforms.ToTensor())
-    
+
+    elif in_dataset == 'mnist':
+        testset = torchvision.datasets.MNIST(root='./data', train=False,
+                                          download=True, transform=transforms.ToTensor())
+    elif in_dataset == 'fmnist':
+        testset = torchvision.datasets.FashionMNIST(root='./data', train=False,
+                                          download=True, transform=transforms.ToTensor())
+    elif in_dataset == 'svhn':
+        testset = torchvision.datasets.SVHN(root='./data', split='test',
+                                          download=True, transform=transforms.ToTensor())                        
+    elif in_dataset == 'cifar100':
+        testset = torchvision.datasets.CIFAR100(root='./data', train=False,
+                                          download=True, transform=transforms.ToTensor())
+        testset.targets = sparse2coarse(testset.targets)
+        
     select_indices(testset, out_indices)
 
 
     out_datasets.append(testset)
-    returned_out_names.append("cifar10 out classes: " + str(out_indices))
+    returned_out_names.append(f"{in_dataset} out classes: " + str(out_indices))
     
     return returned_out_names, out_datasets
 

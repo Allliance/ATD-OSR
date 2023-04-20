@@ -85,7 +85,7 @@ else:
   print("List of in indices:", in_classes_indices)
   trainloader, valloader = get_in_training_loaders_osr(in_dataset, batch_size, in_classes_indices)
   trainloader_out, valloader_out = get_out_training_loaders_osr(batch_size,
-   size=int(len(trainloader.dataset) / args.in_classes))
+   size=int(len(trainloader.dataset) / args.in_classes), exposure_path=args.exposure_path)
 
 #Model DCGAN
 # Number of channels in the training images. For color images this is 3
