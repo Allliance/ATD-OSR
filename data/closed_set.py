@@ -66,14 +66,14 @@ def list_data(dataset):
 def select_indices(dataset, in_classes):
     try:
         indices = np.asarray([i for i, x in enumerate(dataset.targets) if x in in_classes])
-        dataset.data = np.asarray(dataset.data)[indices]
         dataset.targets = np.asarray(dataset.targets)[indices]
+        dataset.data = np.asarray(dataset.data)[indices]
         list_data(dataset)
         dataset.targets = [in_classes.index(x) for x in dataset.targets]
     except Exception as e:
         indices = np.asarray([i for i, x in enumerate(dataset.labels) if x in in_classes])
+        dataset.labels = np.asarray(dataset.labels)[indices]
         dataset.data = np.asarray(dataset.data)[indices]
-        dataset.tarlabelsgets = np.asarray(dataset.labels)[indices]
         list_data(dataset)
         dataset.labels = [in_classes.index(x) for x in dataset.labels]
     
