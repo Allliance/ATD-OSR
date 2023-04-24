@@ -116,10 +116,10 @@ def get_out_testing_datasets_osr(in_dataset, out_indices):
 
     elif in_dataset == 'mnist':
         testset = torchvision.datasets.MNIST(root='./data', train=False,
-                                          download=True, transform=transforms.Compose[transforms.Grayscale(3), transforms.ToTensor()])
+                                          download=True, transform=transforms.Compose([transforms.Grayscale(3), transforms.ToTensor()]))
     elif in_dataset == 'fmnist':
         testset = torchvision.datasets.FashionMNIST(root='./data', train=False,
-                                          download=True, transform=transforms.Compose[transforms.Grayscale(3), transforms.ToTensor()])
+                                          download=True, transform=transforms.Compose([transforms.Grayscale(3), transforms.ToTensor()]))
     elif in_dataset == 'svhn':
         testset = torchvision.datasets.SVHN(root='./data', split='test',
                                           download=True, transform=transforms.ToTensor())                        
