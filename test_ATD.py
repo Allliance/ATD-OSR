@@ -19,8 +19,10 @@ os.environ['TORCH_HOME'] = 'models/'
 #get args
 def get_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--exposure_path', default='./imagenet', type=str)
     parser.add_argument('--fea_path', default='./best_fea.pt', type=str)
     parser.add_argument('--run_index', default=0, type=int)
+    parser.add_argument('--in_classes', default=6, type=int)
     parser.add_argument('--method', default='ood', type=str, choices={'ood', 'osr'})
     parser.add_argument('--model_type', default='fea', type=str, choices={'fea', 'pix'})
     parser.add_argument('--training_type', default='adv', type=str, choices={'clean', 'adv'})
