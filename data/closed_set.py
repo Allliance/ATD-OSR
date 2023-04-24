@@ -31,10 +31,10 @@ def get_in_training_loaders(in_dataset, batch_size):
                                           download=True, transform=transforms.ToTensor())
     elif in_dataset == 'mnist':
         dataset = torchvision.datasets.MNIST(root='./data', train=True,
-                                          download=True, transform=transforms.ToTensor())
+                                          download=True, transform=transforms.Compose([transforms.Grayscale(3), transforms.ToTensor()]))
     elif in_dataset == 'fmnist':
         dataset = torchvision.datasets.FashionMNIST(root='./data', train=True,
-                                          download=True, transform=transforms.ToTensor())
+                                          download=True, transform=transforms.Compose([transforms.Grayscale(3), transforms.ToTensor()]))
     elif in_dataset == 'svhn':
         dataset = torchvision.datasets.SVHN(root='./data', split='train',
                                           download=True, transform=transforms.ToTensor())                        
@@ -86,10 +86,10 @@ def get_in_training_loaders_osr(in_dataset, batch_size, in_classes_indices):
                                           download=True, transform=transforms.ToTensor())
     elif in_dataset == 'mnist':
         dataset = torchvision.datasets.MNIST(root='./data', train=True,
-                                          download=True, transform=transforms.ToTensor())
+                                          download=True, transform=transforms.Compose([transforms.Grayscale(3), transforms.ToTensor()]))
     elif in_dataset == 'fmnist':
         dataset = torchvision.datasets.FashionMNIST(root='./data', train=True,
-                                          download=True, transform=transforms.ToTensor())
+                                          download=True, transform=transforms.Compose([transforms.Grayscale(3), transforms.ToTensor()]))
     elif in_dataset == 'svhn':
         dataset = torchvision.datasets.SVHN(root='./data', split='train',
                                           download=True, transform=transforms.ToTensor())                        
@@ -125,10 +125,10 @@ def get_in_testing_loader(in_dataset, batch_size):
 
     elif in_dataset == 'mnist':
         testset = torchvision.datasets.MNIST(root='./data', train=False,
-                                          download=True, transform=transforms.ToTensor())
+                                          download=True, transform=transforms.Compose([transforms.Grayscale(3), transforms.ToTensor()]))
     elif in_dataset == 'fmnist':
         testset = torchvision.datasets.FashionMNIST(root='./data', train=False,
-                                          download=True, transform=transforms.ToTensor())
+                                          download=True, transform=transforms.Compose([transforms.Grayscale(3), transforms.ToTensor()]))
     elif in_dataset == 'svhn':
         testset = torchvision.datasets.SVHN(root='./data', split='test',
                                           download=True, transform=transforms.ToTensor())                        
@@ -155,10 +155,10 @@ def get_in_testing_loader_osr(in_dataset, batch_size, in_classes_indices):
         testset.targets = sparse2coarse(testset.targets)
     elif in_dataset == 'mnist':
         testset = torchvision.datasets.MNIST(root='./data', train=False,
-                                          download=True, transform=transforms.Compose[transforms.Grayscale(3), transforms.ToTensor()])
+                                          download=True, transform=transforms.Compose([transforms.Grayscale(3), transforms.ToTensor()]))
     elif in_dataset == 'fmnist':
         testset = torchvision.datasets.FashionMNIST(root='./data', train=False,
-                                          download=True, transform=transforms.Compose[transforms.Grayscale(3), transforms.ToTensor()])
+                                          download=True, transform=transforms.Compose([transforms.Grayscale(3), transforms.ToTensor()]))
     elif in_dataset == 'svhn':
         testset = torchvision.datasets.SVHN(root='./data', split='test',
                                           download=True, transform=transforms.ToTensor())                        
