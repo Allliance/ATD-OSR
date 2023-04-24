@@ -155,10 +155,10 @@ def get_in_testing_loader_osr(in_dataset, batch_size, in_classes_indices):
         testset.targets = sparse2coarse(testset.targets)
     elif in_dataset == 'mnist':
         testset = torchvision.datasets.MNIST(root='./data', train=False,
-                                          download=True, transform=transforms.ToTensor())
+                                          download=True, transform=transforms.Compose[transforms.Grayscale(3), transforms.ToTensor()])
     elif in_dataset == 'fmnist':
         testset = torchvision.datasets.FashionMNIST(root='./data', train=False,
-                                          download=True, transform=transforms.ToTensor())
+                                          download=True, transform=transforms.Compose[transforms.Grayscale(3), transforms.ToTensor()])
     elif in_dataset == 'svhn':
         testset = torchvision.datasets.SVHN(root='./data', split='test',
                                           download=True, transform=transforms.ToTensor())                        
