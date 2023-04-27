@@ -49,8 +49,6 @@ def get_out_training_loaders_osr(batch_size, size=5000, exposure_path='./out'):
                                                                                          transforms.RandomApply([transforms.RandomAffine(0, translate=None, scale=(0.5, 0.75), shear=30)], p=0.6),
                                                                                          transforms.RandomApply([transforms.AutoAugment()], p=0.9),]),
                                                                                     transforms.ToTensor()]))
-    size = 5000
-    list_data(trainset_out)
     trainset_out.data = random.sample(trainset_out.data, k=size)
     
     trainloader_out = DataLoader(trainset_out, batch_size=batch_size, shuffle=True, num_workers=2)
@@ -60,17 +58,10 @@ def get_out_training_loaders_osr(batch_size, size=5000, exposure_path='./out'):
 
     return trainloader_out, valloader_out
 
-
-def list_data(dataset):
-    dataset.data = [x for x in dataset.data]
-    dataset.targets = [x for x in dataset.targets]
-    
 def select_indices(dataset, in_classes):
     indices = np.asarray([i for i, x in enumerate(dataset.targets) if x in in_classes])
     dataset.data = np.asarray(dataset.data)[indices]
     dataset.targets = np.asarray(dataset.targets)[indices]
-    list_data(dataset)
-    dataset.targets = [in_classes.index(x) for x in dataset.targets]
 
 def get_out_training_loaders(batch_size):
 
