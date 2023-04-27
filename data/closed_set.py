@@ -55,27 +55,15 @@ def get_in_training_loaders(in_dataset, batch_size):
 
     return trainloader, valloader
 
-
-def list_data(dataset):
-    dataset.data = [x for x in dataset.data]
-    try:
-        dataset.targets = [x for x in dataset.targets]
-    except Exception as e:
-        dataset.labels = [x for x in dataset.labels]
-    
 def select_indices(dataset, in_classes):
     try:
         indices = np.asarray([i for i, x in enumerate(dataset.targets) if x in in_classes])
         dataset.targets = np.asarray(dataset.targets)[indices]
         dataset.data = np.asarray(dataset.data)[indices]
-        list_data(dataset)
-        dataset.targets = [in_classes.index(x) for x in dataset.targets]
     except Exception as e:
         indices = np.asarray([i for i, x in enumerate(dataset.labels) if x in in_classes])
         dataset.labels = np.asarray(dataset.labels)[indices]
         dataset.data = np.asarray(dataset.data)[indices]
-        list_data(dataset)
-        dataset.labels = [in_classes.index(x) for x in dataset.labels]
     
 
 def get_in_training_loaders_osr(in_dataset, batch_size, in_classes_indices):
