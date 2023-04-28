@@ -1,3 +1,4 @@
+%%writefile data/closed_set.py
 import torch
 from torch.utils.data import DataLoader, random_split
 import torchvision
@@ -31,10 +32,10 @@ def get_in_training_loaders(in_dataset, batch_size):
                                           download=True, transform=transforms.ToTensor())
     elif in_dataset == 'mnist':
         dataset = torchvision.datasets.MNIST(root='./data', train=True,
-                                          download=True, transform=transforms.Compose([transforms.Resize(32), transforms.Grayscale(3), transforms.ToTensor()]))
+                                          download=True, transform=transforms.Compose([transforms.Grayscale(3), transforms.ToTensor()]))
     elif in_dataset == 'fmnist':
         dataset = torchvision.datasets.FashionMNIST(root='./data', train=True,
-                                          download=True, transform=transforms.Compose([transforms.Resize(32), transforms.Grayscale(3), transforms.ToTensor()]))
+                                          download=True, transform=transforms.Compose([transforms.Grayscale(3), transforms.ToTensor()]))
     elif in_dataset == 'svhn':
         dataset = torchvision.datasets.SVHN(root='./data', split='train',
                                           download=True, transform=transforms.ToTensor())                        
@@ -46,6 +47,7 @@ def get_in_training_loaders(in_dataset, batch_size):
     elif in_dataset == 'TI':
         dataset = torchvision.datasets.ImageFolder(root = './data/tiny-imagenet-200/train', transform=transforms.Compose([transforms.Resize(32), transforms.ToTensor()]))
 
+        
     train_size = int(0.9 * len(dataset))
     test_size = len(dataset) - train_size
     trainset, valset = random_split(dataset, [train_size, test_size])
@@ -58,12 +60,30 @@ def get_in_training_loaders(in_dataset, batch_size):
 def select_indices(dataset, in_classes):
     try:
         indices = np.asarray([i for i, x in enumerate(dataset.targets) if x in in_classes])
-        dataset.targets = np.asarray(dataset.targets)[indices]
-        dataset.data = np.asarray(dataset.data)[indices]
+        if type(dataset.data) == list:
+            dataset.data = np.asarray(dataset.data)[indices]
+            dataset.data = [x for x in dataset.data]
+        else:
+            dataset.data = dataset.data[indices]
+            
+        if type(dataset.targets) == list:
+            dataset.targets = np.asarray(dataset.targets)[indices]
+            dataset.targets = [x for x in dataset.targets]
+        else:
+            dataset.targets = dataset.targets[indices]
     except Exception as e:
         indices = np.asarray([i for i, x in enumerate(dataset.labels) if x in in_classes])
-        dataset.labels = np.asarray(dataset.labels)[indices]
-        dataset.data = np.asarray(dataset.data)[indices]
+        if type(dataset.data) == list:
+            dataset.data = np.asarray(dataset.data)[indices]
+            dataset.data = [x for x in dataset.data]
+        else:
+            dataset.data = dataset.data[indices]
+            
+        if type(dataset.labels) == list:
+            dataset.labels = np.asarray(dataset.labels)[indices]
+            dataset.labels = [x for x in dataset.labels]
+        else:
+            dataset.labels = dataset.labels[indices]
     
 
 def get_in_training_loaders_osr(in_dataset, batch_size, in_classes_indices):
@@ -113,10 +133,10 @@ def get_in_testing_loader(in_dataset, batch_size):
 
     elif in_dataset == 'mnist':
         testset = torchvision.datasets.MNIST(root='./data', train=False,
-                                          download=True, transform=transforms.Compose([transforms.Resize(32), transforms.Grayscale(3), transforms.ToTensor()]))
+                                          download=True, transform=transforms.Compose([transforms.Grayscale(3), transforms.ToTensor()]))
     elif in_dataset == 'fmnist':
         testset = torchvision.datasets.FashionMNIST(root='./data', train=False,
-                                          download=True, transform=transforms.Compose([transforms.Resize(32), transforms.Grayscale(3), transforms.ToTensor()]))
+                                          download=True, transform=transforms.Compose([transforms.Grayscale(3), transforms.ToTensor()]))
     elif in_dataset == 'svhn':
         testset = torchvision.datasets.SVHN(root='./data', split='test',
                                           download=True, transform=transforms.ToTensor())                        
