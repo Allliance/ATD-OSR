@@ -1,4 +1,3 @@
-%%writefile data/closed_set.py
 import torch
 from torch.utils.data import DataLoader, random_split
 import torchvision
