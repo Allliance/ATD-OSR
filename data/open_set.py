@@ -16,11 +16,6 @@ def food_loader(path):
     return img
 
 
-def list_data(dataset):
-    dataset.data = [x for x in dataset.data]
-    dataset.targets = [x for x in dataset.targets]
-
-
 class ImageNet(torch.utils.data.Dataset):
     def __init__(self, root='./out', size=32, transform=transforms.Compose([transforms.ToTensor()])):
         file_paths = glob(os.path.join(root, '*.jpeg'))
@@ -59,9 +54,33 @@ def get_out_training_loaders_osr(batch_size, size=5000, exposure_path='./out'):
     return trainloader_out, valloader_out
 
 def select_indices(dataset, in_classes):
-    indices = np.asarray([i for i, x in enumerate(dataset.targets) if x in in_classes])
-    dataset.data = np.asarray(dataset.data)[indices]
-    dataset.targets = np.asarray(dataset.targets)[indices]
+    try:
+        indices = np.asarray([i for i, x in enumerate(dataset.targets) if x in in_classes])
+        if type(dataset.data) == list:
+            dataset.data = np.asarray(dataset.data)[indices]
+            dataset.data = [x for x in dataset.data]
+        else:
+            dataset.data = dataset.data[indices]
+            
+        if type(dataset.targets) == list:
+            dataset.targets = np.asarray(dataset.targets)[indices]
+            dataset.targets = [x for x in dataset.targets]
+        else:
+            dataset.targets = dataset.targets[indices]
+    except Exception as e:
+        indices = np.asarray([i for i, x in enumerate(dataset.labels) if x in in_classes])
+        if type(dataset.data) == list:
+            dataset.data = np.asarray(dataset.data)[indices]
+            dataset.data = [x for x in dataset.data]
+        else:
+            dataset.data = dataset.data[indices]
+            
+        if type(dataset.labels) == list:
+            dataset.labels = np.asarray(dataset.labels)[indices]
+            dataset.labels = [x for x in dataset.labels]
+        else:
+            dataset.labels = dataset.labels[indices]
+    
 
 def get_out_training_loaders(batch_size):
 
